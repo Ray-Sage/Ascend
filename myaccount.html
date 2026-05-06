@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Account — AscendX Academy</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<style>
+
+body{
+font-family:Poppins;
+margin:0;
+background:#f4f6fb;
+color:#0b2340;
+}
+
+.header{
+background:#0f1f3d;
+color:white;
+padding:15px 20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:280px 1fr;
+gap:20px;
+}
+
+.card{
+background:white;
+border-radius:12px;
+padding:20px;
+box-shadow:0 6px 20px rgba(0,0,0,0.05);
+}
+
+.avatar{
+width:80px;
+height:80px;
+border-radius:50%;
+background:#1a73e8;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:30px;
+color:white;
+font-weight:700;
+margin-bottom:10px;
+}
+
+.btn{
+background:#1a73e8;
+border:none;
+padding:10px 16px;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+.btn.danger{
+background:#d32f2f;
+}
+
+.input{
+width:100%;
+padding:10px;
+margin-top:6px;
+margin-bottom:15px;
+border-radius:8px;
+border:1px solid #ddd;
+}
+
+.stat{
+display:flex;
+justify-content:space-between;
+margin-bottom:10px;
+}
+
+.stat strong{
+font-size:18px;
+}
+
+.section-title{
+margin-top:0;
+}
+
+.success{
+color:#2e7d32;
+}
+
+.error{
+color:#d32f2f;
+}
+
+@media(max-width:900px){
+
+.grid{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<div><strong>AscendX Academy</strong></div>
+<button class="btn" onclick="location.href='index.html'">Dashboard</button>
+</div>
+
+<div class="container">
+
+<div class="grid">
+
+<!-- LEFT PROFILE -->
+
+<div class="card">
+
+<div class="avatar" id="avatar">A</div>
+
+<h3 id="userName">Loading...</h3>
+
+<p id="userEmail"></p>
+
+<hr>
+
+<h4>Account Stats</h4>
+
+<div class="stat">
+<span>Courses Enrolled</span>
+<strong id="coursesCount">0</strong>
+</div>
+
+<div class="stat">
+<span>Certificates</span>
+<strong id="certCount">0</strong>
+</div>
+
+<div class="stat">
+<span>Completed Lessons</span>
+<strong id="lessonCount">0</strong>
+</div>
+
+<br>
+
+<button class="btn danger" onclick="logout()">Logout</button>
+
+</div>
+
+
+<!-- RIGHT SETTINGS -->
+
+<div>
+
+<div class="card">
+
+<h3 class="section-title">Profile Settings</h3>
+
+<label>Full Name</label>
+<input class="input" id="newName">
+
+<button class="btn" onclick="updateName()">Update Name</button>
+
+<p id="nameMsg"></p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3 class="section-title">Security</h3>
+
+<label>New Password</label>
+<input class="input" type="password" id="newPass">
+
+<label>Confirm Password</label>
+<input class="input" type="password" id="confirmPass">
+
+<button class="btn" onclick="updatePassword()">Change Password</button>
+
+<p id="passMsg"></p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3 class="section-title">Account Info</h3>
+
+<p><strong>Email:</strong> <span id="infoEmail"></span></p>
+
+<p><strong>User ID:</strong></p>
+<small id="uid"></small>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* FIREBASE CONFIG */
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyBYbc5UMPjL5Ov9HIsOi2yYz6EH2HiM1dc",
+  authDomain: "ascendx-2992d.firebaseapp.com",
+  databaseURL: "https://ascendx-2992d-default-rtdb.firebaseio.com",
+  projectId: "ascendx-2992d",
+  storageBucket: "ascendx-2992d.firebasestorage.app",
+  messagingSenderId: "190104997680",
+  appId: "1:190104997680:web:d407d5da2b2e95fd9942f5",
+  measurementId: "G-7WMJ90QV88"
+
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
+/* LOAD USER */
+
+auth.onAuthStateChanged(async user => {
+
+if(!user){
+
+location.href="login.html";
+return;
+
+}
+
+document.getElementById("userEmail").textContent=user.email;
+document.getElementById("infoEmail").textContent=user.email;
+document.getElementById("uid").textContent=user.uid;
+
+let name=user.displayName || "Student";
+
+document.getElementById("userName").textContent=name;
+document.getElementById("newName").value=name;
+
+document.getElementById("avatar").textContent=name.charAt(0).toUpperCase();
+
+/* LOAD STATS */
+
+loadStats(user.uid);
+
+});
+
+
+/* UPDATE NAME */
+
+async function updateName(){
+
+const name=document.getElementById("newName").value.trim();
+
+const msg=document.getElementById("nameMsg");
+
+if(!name){
+
+msg.textContent="Name cannot be empty";
+msg.className="error";
+return;
+
+}
+
+const user=auth.currentUser;
+
+await user.updateProfile({
+displayName:name
+});
+
+msg.textContent="Name updated successfully";
+msg.className="success";
+
+document.getElementById("userName").textContent=name;
+document.getElementById("avatar").textContent=name.charAt(0).toUpperCase();
+
+}
+
+
+/* UPDATE PASSWORD */
+
+async function updatePassword(){
+
+const pass=document.getElementById("newPass").value;
+const confirm=document.getElementById("confirmPass").value;
+
+const msg=document.getElementById("passMsg");
+
+if(pass.length<6){
+
+msg.textContent="Password must be at least 6 characters";
+msg.className="error";
+return;
+
+}
+
+if(pass!==confirm){
+
+msg.textContent="Passwords do not match";
+msg.className="error";
+return;
+
+}
+
+try{
+
+await auth.currentUser.updatePassword(pass);
+
+msg.textContent="Password updated successfully";
+msg.className="success";
+
+}catch(e){
+
+msg.textContent="You must login again before changing password";
+msg.className="error";
+
+}
+
+}
+
+
+/* LOAD ACCOUNT STATS */
+
+async function loadStats(uid){
+
+let courses=0;
+let certs=0;
+let lessons=0;
+
+try{
+
+const enroll=await db.collection("enrollments")
+.where("userId","==",uid)
+.get();
+
+courses=enroll.size;
+
+const certificates=await db.collection("certificates")
+.where("userId","==",uid)
+.get();
+
+certs=certificates.size;
+
+const progress=await db.collection("progress")
+.where("userId","==",uid)
+.get();
+
+lessons=progress.size;
+
+}catch(e){}
+
+document.getElementById("coursesCount").textContent=courses;
+document.getElementById("certCount").textContent=certs;
+document.getElementById("lessonCount").textContent=lessons;
+
+}
+
+
+/* LOGOUT */
+
+function logout(){
+
+auth.signOut();
+location.href="login.html";
+
+}
+
+</script>
+
+</body>
+</html>
