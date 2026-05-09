@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dashboard</title>
+     <link rel="stylesheet" href="loader.css">
+     <link rel="stylesheet" href="dashboard.css">
+     
+    
+</head>
+<body id="body" class="x">
+
+    <header id="nav">
+        <p id = 'navp'>AscendX</p>
+        
+         <div id="menuIcon" class="hamburger" onclick="toggleMenu()"> 
+                <span class="span"></span>
+                <span  class="span"></span>
+                <span  class="span"></span>
+           </div>
+           
+           
+          
+       
+        
+    </header>
+     
+    <nav class="dashboardMenu">
+      <ul class="menulistUp">  
+      <div class="hamburger" onclick="toggleMenu()"> 
+                <span class="span"></span>
+                <span  class="span"></span>
+                
+           </div>
+           <p id = 'navp1' class="navp">AscendX</p>
+        <li class="li" onclick='navigate("dash")'>Dashboard</li>
+        <li  class="li" onclick='navigate("cs")'>Courses</li>
+        <li class="li"  onclick='navigate("upd")'>Updates</li>
+        <li  class="li" onclick='navigate("ai")'>AI Assistant</li>
+        <li  class="li" onclick='navigate("pg")'>Code Editor</li>
+        <li class="li"  onclick='navigate("lb")'>Leaderboard</li>
+        <li class="li" onclick='navigate("qz")'>Quiz</li>
+        <li class="li" onclick='navigate("pj")'>Projects</li>
+        <li class="li" onclick='navigate("ht")'>Hackathons</li>
+        <li class="li" onclick='navigate("cc")'>Code Challenge</li>
+        <li class="li admin" onclick='navigate("admin")'>Admin Portal</li>
+        
+        <hr>
+        <div class="toggleDiv"><p class="p2">Dark Theme </p><input type="checkbox" onclick="toggleTheme()" class="theme"> <span class="slider"></span></div>
+        <li class="li" onclick='navigate("ac")'>My Account</li>
+        <li class="li" onclick='navigate("au")'>About Us</li>
+        <li class="li" >LogOut</li>
+    </nav>
+      </ul>
+    
+    <main>
+    
+    <!-- Dashboard -->
+    
+    
+    <section  class="active sections" id="dash">
+    
+    
+    
+             <div>
+                <h1>Dashboard</h1>
+                <input id="in">
+                <button onclick="userDetails()">Click</button>
+             </div>
+             
+             
+             
+     </section>
+     
+     
+     
+     <!-- Admin portal -->
+     
+     
+      <section  class="inactive sections adminPortal" id="admin">
+    
+    
+    
+             <div>
+                <h1>Admin Portal</h1>
+               <center><h4>Welcome back sir!</h4></center> 
+                
+                
+                <div class="ManageParent">
+                    <div class="Manage">
+                   <h2> Create a course</h2>
+                   <input id="courseName" class="input" type="text" placeholder="Enter name of your course"></input>
+                   <p>Course Description</p>
+                   <textarea id="courseDescription" class="input" type="text" placeholder="Describe your course"></textarea>
+                  <p>Course type</p> 
+                    <select id="select">
+                        <option value="none">Choose an option</option>
+                        <option>HTML</option>
+                        <option>CSS</option>
+                        <option>JavaScript</option>
+                        
+                    </select>
+                    <input id="lessonLocation" type="url" placeholder="Enter lessons location" required></input>
+                    
+                    <button class="AdminBtn" onclick="submitData()">Create Course</button>
+                    
+                 </div>
+                 </div>
+                 
+                    <div class="ManageParent">
+                    <div class="Manage" id="manageC">
+                   <h2> Manage courses</h2>
+                    <p>choose Course</p>
+                         
+                     <div class="coursesAvailable">
+                           <div class="newDiv"> <div class="loader"></div><h4> Loading courses please wait......</h4></div>
+                         </div>
+                         
+                      <p>Update Course Name</p>
+                     <input  type="text" placeholder="Enter a new course name"></input>
+                     <p>Update Description</p>
+                     <textarea placeholder="Enter your description" class="input"></textarea>
+                     
+                     
+                      <br>
+                      <p>Add lessons</p>
+                      <input clas="input" type="url" placeholder="Enter lesson location"> </input>
+                      <button class="AdminBtn addLesson">Add Lesson</button>
+                      
+                    <button class="AdminBtn">Update Course</button>
+                    
+                 </div>
+                 </div>
+                
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     
+     
+     
+     <!-- Courses -->
+     
+       <section  class="inactive sections adminPortal" id="cs">
+    
+    
+    
+           
+               
+                 
+                 
+                <h1>Courses</h1>
+                <center><h4>Welcome, Explore our courses and lessons!</h4></center>
+                <div class="ManageParent">
+                <div class="Manage" id="manageC">
+                   <div class="simpleDiv"> 
+                     <span class="span1 activeCategory" id="all" onclick="CourseCategory('all')">All</span>
+                     <span class="span1" id="html" onclick="CourseCategory('html')">HTML</span>
+                     <span class="span1" id="css" onclick="CourseCategory('css')">CSS</span>
+                     <span class="span1" id="js" onclick="CourseCategory('js')">JavaScript</span>
+                    
+                    </div>
+                     <input type="search" placeholder="Search lessons here">
+                     
+                     
+                     <div class="coursesCards"><p> Loading lessons and courses. Please wait....... </p><div class="loader"></div> </div>
+                     
+              </div>
+               </div>
+             
+             
+             
+     </section>
+     
+     
+     
+     
+     
+       <section class="inactive sections" id="upd">
+    
+    
+    
+             <div>
+                <h1>Updates</h1>
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     
+     <section class="inactive sections" id="ai">
+    
+    
+    
+             <div>
+                <h1>AI Assistant</h1>
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     
+       <section class="inactive sections" id="lb">
+    
+    
+    
+             <div>
+                <h1>Leaderboard</h1>
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     
+      <section class="inactive sections" id="qz">
+    
+    
+    
+             <div>
+                <h1>Quiz</h1>
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     
+      <section class="inactive sections" id="pj">
+    
+    
+    
+             <div>
+                <h1>Projects</h1>
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     
+      <section class="inactive sections" id="lb">
+    
+    
+    
+             <div>
+                <h1>Leaderboard</h1>
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     
+      <section class="inactive sections" id="pg">
+    
+    
+    
+             <div>
+                <h1>Code Playground</h1>
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     <section class="inactive sections" id="ac">
+    
+    
+    
+             <div>
+                <h1>My Account</h1>
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     
+       <section class="inactive sections" id="ht">
+    
+    
+    
+             <div>
+                <h1>Hackathons</h1>
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     <section class="inactive sections" id="cc">
+    
+    
+    
+             <div>
+                <h1>Code Challenge</h1>
+                
+             </div>
+             
+             
+             
+     </section>
+     
+     
+     
+    
+     
+     
+     
+     <section class="inactive sections" id="au">
+    
+    
+    
+        
+
+
+<div>
+  <h2>About AscendX</h2>
+  <p>
+    AscendX is a modern learning platform designed to empower students 
+    with structured modules, real-time progress tracking, leaderboards, 
+    transcripts, and performance-driven learning tools.
+  </p>
+
+  <div class="cards">
+
+    <div class="card">
+      <h3>🎯 Our Mission</h3>
+      <p>
+        To provide accessible, engaging, and performance-based digital 
+        education for learners worldwide.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>🚀 Our Vision</h3>
+      <p>
+        To become a smart educational ecosystem where progress, 
+        competition, and achievement are seamlessly integrated.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>🏆 Why Choose Us?</h3>
+      <p>
+        Smart tracking system, structured learning paths, 
+        dynamic leaderboards, and real-time transcript generation.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  © 2026 AscendX. All Rights Reserved.
+</footer>
+
+
+
+                
+         
+             
+             
+             
+     </section>
+     
+     
+    </main>
+   
+       
+    
+  
+    <script src="main.js"></script> 
+    <script type="module" src="auth.js"></script>
+</body>
+</html>

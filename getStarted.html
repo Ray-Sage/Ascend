@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Join AscendX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background: rgb(15, 31, 61);
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .parentContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      padding: 20px;
+      border: 1px solid gray;
+      width: 400px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    input {
+      border: 2px solid silver;
+      border-radius: 10px;
+      height: 40px;
+      width: 90%;
+      margin-bottom: 12px;
+      padding: 0 10px;
+    }
+
+    .btn {
+      width: 90%;
+      height: 40px;
+      background: blue;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+      margin-bottom: 10px
+    }
+
+    .btn:disabled {
+      background: gray;
+      cursor: not-allowed;
+    }
+
+    #errorMsg {
+      color: red;
+      font-size: 14px;
+    }
+    a{
+        color: white;
+        font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="parentContainer">
+    <div class="container">
+      <h1>Sign Up</h1>
+      <p>Join AscendX and develop with us!</p>
+      
+
+      <form id="signupForm">
+        <p id="errorMsg"></p>
+
+        <input type="text" class="name" placeholder="Full name" required>
+        <input type="email" class="email" placeholder="Email" required>
+        <input type="password" class="password" placeholder="Password" required>
+        <input type="password" class="confirmPassword" placeholder="Confirm Password" required>
+
+        <button class="btn submitBtn" type="submit">Sign Up</button>
+        <button class="btn googleBtn" type="button">Sign Up with Google</button>
+        <a href="signin.html">Already have an account? LogIn</a>
+      </form>
+      <h5>&copy; 2026 AscendX, All Rights Reserved</h5>
+    <p>Learn.Develop.Ascend</p>
+    </div>
+     
+  </div>
+  
+  
+   
+  
+  
+  
+  
+  
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBYbc5UMPjL5Ov9HIsOi2yYz6EH2HiM1dc",
+  authDomain: "ascendx-2992d.firebaseapp.com",
+  projectId: "ascendx-2992d",
+  storageBucket: "ascendx-2992d.appspot.com",
+  messagingSenderId: "190104997680",
+  appId: "1:190104997680:web:5ed91efc9e17fc059942f5",
+  measurementId: "G-19XTLCD45V"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("signupForm");
+    const errorMsg = document.getElementById("errorMsg");
+    const submitBtn = document.querySelector(".submitBtn");
+    const googleBtn = document.querySelector(".googleBtn");
+
+    // 🔐 SIGN UP WITH EMAIL
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.querySelector(".name").value.trim();
+      const email = document.querySelector(".email").value.trim();
+      const password = document.querySelector(".password").value;
+      const confirmPassword = document.querySelector(".confirmPassword").value;
+
+      errorMsg.textContent = "";
+
+      if (password !== confirmPassword) {
+        errorMsg.textContent = "Passwords do not match";
+        return;
+      }
+
+      if (password.length < 6) {
+        errorMsg.textContent = "Password must be at least 6 characters";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Creating account...";
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // 🔥 SAVE USER DATA
+        await setDoc(doc(db, "users", user.uid), {
+          name: name,
+          email: email,
+          createdAt: serverTimestamp()
+        });
+
+        window.location.href = "dashboard.html";
+
+      } catch (error) {
+        handleError(error);
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Sign Up";
+    });
+
+    // 🔐 GOOGLE SIGN UP
+    googleBtn.addEventListener("click", async () => {
+      const provider = new GoogleAuthProvider();
+
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // Save user if new
+        await setDoc(doc(db, "users", user.uid), {
+          name: user.displayName,
+          email: user.email,
+          createdAt: serverTimestamp()
+        });
+
+        window.location.href = "dashboard.html";
+
+      } catch (error) {
+        handleError(error);
+      }
+    });
+
+    // ⚠️ CLEAN ERROR HANDLING
+    function handleError(error) {
+      console.log(error.code);
+
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          errorMsg.textContent = "Email already exists.";
+          break;
+        case "auth/invalid-email":
+          errorMsg.textContent = "Invalid email address.";
+          break;
+        case "auth/weak-password":
+          errorMsg.textContent = "Password too weak.";
+          break;
+        default:
+          errorMsg.textContent = "Something went wrong.";
+      }
+    }
+  </script>
+</body>
+</html>
